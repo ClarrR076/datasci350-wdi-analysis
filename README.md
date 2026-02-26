@@ -11,3 +11,5 @@ https://clarrr076.github.io/datasci350-wdi-analysis/slides.html
 
 This project analyses World Development Indicators data using Python, Quarto, and GitHub Pages. The report includes exploratory data analysis, visualisations, summary statistics, and reproducible code.
 
+Bonus Dashboard:
+https://clarrr076.github.io/datasci350-wdi-analysis/dashboard.html

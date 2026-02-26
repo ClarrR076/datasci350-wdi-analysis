@@ -1,0 +1,107 @@
+---
+title: "WDI 2022 Interactive Dashboard"
+author: "Yan Tian"
+date: "2026-02-25"
+format:
+  dashboard:
+    theme: cosmo
+    orientation: columns
+execute:
+  echo: false
+---
+
+```{python}
+import pandas as pd
+import plotly.graph_objects as go
+
+df = pd.read_csv("wdi.csv")
+
+# keep 5 indicators for the dashboard
+cols = [
+  "country",
+  "gdp_per_capita",
+  "life_expectancy",
+  "inflation_rate",
+  "unemployment_rate",
+  "exports_gdp_share"
+]
+dash = df[cols].dropna()
+
+labels = {
+  "gdp_per_capita": "GDP per capita (current US$)",
+  "life_expectancy": "Life expectancy (years)",
+  "inflation_rate": "Inflation rate (annual %)",
+  "unemployment_rate": "Unemployment rate (%)",
+  "exports_gdp_share": "Exports (% of GDP)"
+}
+vars_list = ["gdp_per_capita", "life_expectancy", "inflation_rate", "unemployment_rate", "exports_gdp_share"]
+```
+
+## Scatter Explorer
+This interactive scatter plot allows you to change the X and Y variables using dropdown menus.
+
+```{python}
+# default axes
+x0 = "gdp_per_capita"
+y0 = "life_expectancy"
+
+fig = go.Figure()
+
+fig.add_trace(
+    go.Scatter(
+        x=dash[x0],
+        y=dash[y0],
+        mode="markers",
+        text=dash["country"],
+        hovertemplate="<b>%{text}</b><br>X=%{x}<br>Y=%{y}<extra></extra>"
+    )
+)
+
+# build dropdowns for x and y
+x_buttons = []
+for v in vars_list:
+    x_buttons.append(dict(
+        label=labels[v],
+        method="update",
+        args=[{"x": [dash[v]]},
+              {"xaxis": {"title": labels[v]}}]
+    ))
+
+y_buttons = []
+for v in vars_list:
+    y_buttons.append(dict(
+        label=labels[v],
+        method="update",
+        args=[{"y": [dash[v]]},
+              {"yaxis": {"title": labels[v]}}]
+    ))
+
+fig.update_layout(
+    title="Interactive Scatter Plot (WDI 2022)",
+    xaxis_title=labels[x0],
+    yaxis_title=labels[y0],
+    updatemenus=[
+        dict(buttons=x_buttons, direction="down", x=0.02, y=1.15, xanchor="left", yanchor="top", showactive=True),
+        dict(buttons=y_buttons, direction="down", x=0.52, y=1.15, xanchor="left", yanchor="top", showactive=True),
+    ],
+    annotations=[
+        dict(text="X variable:", x=0.02, y=1.22, xref="paper", yref="paper", showarrow=False),
+        dict(text="Y variable:", x=0.52, y=1.22, xref="paper", yref="paper", showarrow=False),
+    ],
+    height=600
+)
+
+fig
+```
+
+## Top 10 Explorer
+This bar chart is interactive: you can hover for values and zoom.
+
+```{python}
+import plotly.express as px
+
+top10 = dash.sort_values("gdp_per_capita", ascending=False).head(10)
+fig2 = px.bar(top10, x="country", y="gdp_per_capita", title="Top 10 Countries by GDP per Capita (WDI 2022)")
+fig2.update_layout(xaxis_title="Country", yaxis_title=labels["gdp_per_capita"])
+fig2
+```

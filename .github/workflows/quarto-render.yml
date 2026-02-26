@@ -1,0 +1,44 @@
+name: Render Quarto
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python deps
+        run: |
+          pip install pandas matplotlib plotly
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Install TinyTeX (for PDF)
+        run: |
+          quarto install tinytex --no-prompt
+
+      - name: Render report, slides, dashboard
+        run: |
+          quarto render report.qmd
+          quarto render slides.qmd
+          quarto render dashboard.qmd
+
+      - name: Commit rendered outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add report.html report.pdf slides.html dashboard.html
+          git commit -m "CI: Render Quarto outputs" || echo "No changes to commit"
+          git push
