@@ -72,6 +72,7 @@ The summary statistics show variation across countries in GDP per capita, inflat
 
 ```{python}
 #| label: fig-gdp-life-scatter
+#| echo: false
 #| fig-cap: "Relationship between GDP per capita and life expectancy (World Bank, 2022)"
 import matplotlib.pyplot as plt
 
@@ -91,6 +92,7 @@ Figure @fig-gdp-life-scatter shows a positive relationship between GDP per capit
 
 ```{python}
 #| label: fig-top10-gdp-bar
+#| echo: false
 #| fig-cap: "Top 10 countries by GDP per capita (World Bank, 2022)"
 
 top10 = selected.sort_values("gdp_per_capita", ascending=False).head(10)
