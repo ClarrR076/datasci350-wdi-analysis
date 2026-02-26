@@ -1,0 +1,55 @@
+
+---
+title: "World Development Indicators Analysis (2022)"
+author: "Yan Tian"
+date: "2026-02-25"
+format:
+  revealjs:
+    theme: solarized
+    transition: slide
+    slide-number: true
+---
+
+# Introduction
+
+## Overview
+
+- Dataset: World Development Indicators (World Bank, 2022)
+- 217 countries
+- 14 development indicators
+
+# GDP per capita vs Life Expectancy
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("wdi.csv")
+
+plt.figure(figsize=(8,6))
+plt.scatter(df["gdp_per_capita"], df["life_expectancy"])
+
+plt.xlabel("GDP per capita")
+plt.ylabel("Life expectancy")
+
+plt.show()
+```
+
+## Top 10 Countries by GDP per Capita
+```{python}
+top10 = df.sort_values("gdp_per_capita", ascending=False).head(10)
+
+plt.figure(figsize=(10,6))
+plt.bar(top10["country"], top10["gdp_per_capita"])
+
+plt.xlabel("Country")
+plt.ylabel("GDP per capita")
+
+plt.xticks(rotation=45)
+
+plt.show()
+```
+
+## Conclusion
+- GDP per capita varies significantly across countries
+- Higher GDP per capita is associated with higher life expectancy

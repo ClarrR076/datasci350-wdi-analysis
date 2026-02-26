@@ -1,0 +1,128 @@
+---
+title: "World Development Indicators Analysis (2022)"
+author: "Yan Tian"
+date: "2026-02-25"
+bibliography: references.bib
+nocite: '@*'
+format:
+  html:
+    toc: true
+    number-sections: true
+  pdf:
+    toc: true
+    number-sections: true
+---
+
+# Introduction
+
+According to the World Bank [], the WDI dataset provides internationally comparable development indicators.
+
+This report analyses a sample of the World Development Indicators (WDI) dataset for the year 2022. The dataset includes 14 variables across 217 countries. The goal is to conduct exploratory data analysis (EDA), create visualisations, and produce a reproducible report in both HTML and PDF formats.
+
+# Load Data
+
+```{python}
+import pandas as pd
+
+df = pd.read_csv("wdi.csv")
+df.shape
+
+df.head(5)
+```
+# Exploratory Data Analysis
+
+This section explores five key indicators:
+
+- GDP per capita  
+- Life expectancy  
+- Inflation rate  
+- Unemployment rate  
+- Exports as a share of GDP  
+
+These indicators provide insight into economic performance, living standards, and macroeconomic conditions.
+
+## Select Indicators
+
+```{python}
+selected = df[[
+    "country",
+    "gdp_per_capita",
+    "life_expectancy",
+    "inflation_rate",
+    "unemployment_rate",
+    "exports_gdp_share"
+]]
+
+selected.head()
+```
+## Summary Statistics
+```{python}
+selected.describe()
+```
+## Missing Values
+```{python}
+selected.isna().sum()
+```
+The summary statistics show variation across countries in GDP per capita, inflation, and unemployment. Some indicators contain missing values, which is expected in international datasets due to differences in data availability.
+
+
+# Visualisations
+
+## Relationship between GDP per capita and Life Expectancy
+
+```{python}
+#| label: fig-gdp-life-scatter
+#| fig-cap: "Relationship between GDP per capita and life expectancy (World Bank, 2022)"
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8,6))
+plt.scatter(selected["gdp_per_capita"], selected["life_expectancy"])
+
+plt.xlabel("GDP per capita (constant US$)")
+plt.ylabel("Life expectancy (years)")
+plt.title("GDP per capita vs Life Expectancy")
+
+plt.show()
+```
+
+Figure @fig-gdp-life-scatter shows a positive relationship between GDP per capita and life expectancy.
+
+## Top 10 Countries by GDP per Capita
+
+```{python}
+#| label: fig-top10-gdp-bar
+#| fig-cap: "Top 10 countries by GDP per capita (World Bank, 2022)"
+
+top10 = selected.sort_values("gdp_per_capita", ascending=False).head(10)
+
+plt.figure(figsize=(10,6))
+plt.bar(top10["country"], top10["gdp_per_capita"])
+
+plt.xlabel("Country")
+plt.ylabel("GDP per capita (constant US$)")
+plt.title("Top 10 Countries by GDP per Capita")
+
+plt.xticks(rotation=45)
+
+plt.show()
+```
+Figure @fig-top10-gdp-bar displays the countries with the highest GDP per capita.
+# Summary Statistics Table
+
+The key descriptive statistics for the selected indicators are shown in Table @tbl-summary.
+
+```{python}
+#| label: tbl-summary
+#| tbl-cap: "Summary statistics of selected development indicators (World Bank, 2022)"
+
+summary_table = selected[[
+    "gdp_per_capita",
+    "life_expectancy",
+    "inflation_rate",
+    "unemployment_rate",
+    "exports_gdp_share"
+]].describe()
+
+summary_table
+```
+Table @tbl-summary shows variation across countries in economic and social indicators. GDP per capita and inflation show substantial variability, reflecting differences in economic development and macroeconomic stability across countries.
